@@ -1,0 +1,29 @@
+{
+    "name": "Nuvio",
+    "short_name": "Nuvio",
+    "description": "An interactive quiz app for learning programming concepts.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#f7f7f7",
+    "icons": [
+        {
+            "src": "/pandaleid.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/pandaleid.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/pandaleid.png",
+            "sizes": "540x720",
+            "type": "image/png",
+            "label": "A clean and simple homepage to start learning."
+        }
+    ]
+}

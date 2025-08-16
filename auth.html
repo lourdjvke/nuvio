@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuvio | Sign In</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Duolingo-like color palette */
+        :root {
+            --primary-color: #58cc02; /* Duolingo Green */
+            --primary-dark-color: #58a700;
+            --text-color: #3c3c3c;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffffff; /* Plain white background */
+            padding: 1rem;
+        }
+
+        /* Message box styling */
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background-color: #ef4444;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            transform: translateY(-100%);
+            opacity: 0;
+            z-index: 100;
+        }
+
+        .message-box.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Simple button styling */
+        .duolingo-btn {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 700;
+            font-size: 1.125rem; /* text-lg */
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 0 var(--primary-dark-color);
+        }
+
+        .duolingo-btn:hover {
+            background-color: var(--primary-dark-color);
+            transform: translateY(-2px);
+        }
+
+        .duolingo-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 0 var(--primary-dark-color);
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div class="flex-grow flex flex-col items-center justify-center text-center p-4">
+        
+        <button id="google-signin-btn" class="w-full max-w-sm flex items-center justify-center space-x-3 duolingo-btn">
+            <!-- Google SVG Icon -->
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.0001 4.75005C14.0751 4.75005 15.8351 5.48505 17.1551 6.73505L20.0851 3.75005C18.0651 1.79005 15.2651 0.750051 12.0001 0.750051C7.88513 0.750051 4.29013 3.01005 2.22513 6.41505L6.09513 8.95005C7.03513 6.13005 9.38513 4.75005 12.0001 4.75005Z" fill="#EA4335"/>
+                <path d="M22.25 12.1001C22.25 11.3701 22.19 10.6651 22.06 9.97005H11.75V14.0301H18.17C17.89 15.5451 17.035 16.7901 15.825 17.6151V20.2501H19.26C21.28 18.3301 22.25 15.5801 22.25 12.1001Z" fill="#4285F4"/>
+                <path d="M11.75 23.2501C15.005 23.2501 17.705 22.1851 19.535 20.3751L15.825 17.6151C14.735 18.3451 13.365 18.7901 11.75 18.7901C9.18503 18.7901 6.94503 17.0701 6.12003 14.6751L2.14003 17.3901C4.16503 21.3651 7.62503 23.2501 11.75 23.2501Z" fill="#34A853"/>
+                <path d="M6.12003 14.6751C5.89003 14.0151 5.76003 13.3401 5.76003 12.6251C5.76003 11.9101 5.89003 11.2351 6.11003 10.5751V7.95005H2.14003C1.48503 9.20005 1.12503 10.8351 1.12503 12.6251C1.12503 14.4151 1.48503 16.0501 2.14003 17.3001L6.12003 14.6751Z" fill="#FBBC05"/>
+            </svg>
+            <span class="text-lg">Continue</span>
+        </button>
+    </div>
+
+    <!-- Message Box for errors -->
+    <div id="message-box" class="message-box"></div>
+
+    <script type="module">
+        // Import Firebase modules from CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // User-provided Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsrmZFUpscMyrJDwQziXjZtgjr1GvIRz8",
+            authDomain: "meta-rooms.firebaseapp.com",
+            databaseURL: "https://meta-rooms-default-rtdb.firebaseio.com",
+            projectId: "meta-rooms",
+            storageBucket: "meta-rooms.appspot.com",
+            messagingSenderId: "572695349894",
+            appId: "1:572695349894:web:849fe7aa642e32c1565f07",
+            measurementId: "G-Z7WCZ5K1JM"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // Get DOM elements
+        const signInBtn = document.getElementById('google-signin-btn');
+        const messageBox = document.getElementById('message-box');
+
+        // Show a temporary message to the user
+        const showMessage = (message, type = "error") => {
+            messageBox.textContent = message;
+            messageBox.className = `message-box show`;
+            if (type === "success") {
+                messageBox.style.backgroundColor = "#10b981"; // green-500
+            } else {
+                messageBox.style.backgroundColor = "#ef4444"; // red-500
+            }
+            setTimeout(() => {
+                messageBox.classList.remove("show");
+            }, 3000);
+        };
+        
+        // Check if a user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("User is already logged in:", user.uid);
+                // Redirect to the dashboard if already logged in
+                window.location.href = "/";
+            }
+        });
+
+        // Add event listener for the sign-in button
+        signInBtn.addEventListener('click', async () => {
+            try {
+                // Sign in with Google using a popup
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                console.log("Successfully signed in user:", user);
+                // Redirect to the dashboard on successful login
+                window.location.href = "/";
+            } catch (error) {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error("Authentication Error:", errorCode, errorMessage);
+                
+                // Customize error messages for better user experience
+                let userMessage = "An unexpected error occurred. Please try again.";
+                if (errorCode === "auth/popup-closed-by-user") {
+                    userMessage = "Sign-in was canceled. Please try again.";
+                } else if (errorCode === "auth/cancelled-popup-request") {
+                    userMessage = "Please don't close the sign-in window.";
+                }
+
+                showMessage(userMessage);
+            }
+        });
+    </script>
+</body>
+</html>

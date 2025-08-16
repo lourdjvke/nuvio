@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quiz Creator Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #3b82f6;
+        --secondary-color: #e0e7ff;
+        --background-color: #f3f4f6;
+        --card-bg-color: #ffffff;
+        --text-color: #1f2937;
+        --border-color: #d1d5db;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+      .container {
+        background-color: var(--card-bg-color);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 900px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-weight: 700;
+        margin-top: 0;
+      }
+      h1 {
+        color: var(--primary-color);
+        font-size: 2.25rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+      .section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+      }
+      .input-group {
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+      input[type="text"],
+      input[type="number"],
+      textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+        transition: border-color 0.2s;
+      }
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+      }
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+      .code-snippet-textarea {
+        min-height: 150px;
+        font-family: monospace;
+        background-color: #1f2937;
+        color: #f3f4f6;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+      button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, box-shadow 0.2s;
+      }
+      button:hover {
+        background-color: #2563eb;
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+      }
+      .btn-secondary {
+        background-color: #6b7280;
+      }
+      .btn-secondary:hover {
+        background-color: #4b5563;
+      }
+      .btn-danger {
+        background-color: var(--danger-color);
+      }
+      .btn-danger:hover {
+        background-color: #dc2626;
+      }
+      .btn-success {
+        background-color: var(--success-color);
+      }
+      .btn-success:hover {
+        background-color: #047857;
+      }
+      .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+      }
+      .quiz-card {
+        background-color: var(--secondary-color);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+        position: relative;
+      }
+      .quiz-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      }
+      .quiz-card .icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+      .quiz-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+      .quiz-card p {
+        margin-top: 0.5rem;
+        color: #4b5563;
+        font-size: 0.875rem;
+      }
+      .quiz-card .edit-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        padding: 0.5rem;
+      }
+      .quiz-card .delete-btn {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        background: none;
+        border: none;
+        color: var(--danger-color);
+        font-size: 1.5rem;
+        padding: 0.5rem;
+      }
+      .quiz-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+      }
+      .quiz-card-footer p {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-family: monospace;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .copy-id-btn {
+        background-color: transparent;
+        color: #6b7280;
+        border: none;
+        padding: 0.25rem;
+        border-radius: 0.25rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+      .copy-id-btn:hover {
+        color: var(--primary-color);
+      }
+      .icon-picker {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-top: 1rem;
+      }
+      .icon-picker .icon-btn {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--secondary-color);
+        border: 2px solid var(--secondary-color);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 1.5rem;
+      }
+      .icon-picker .icon-btn.selected {
+        border-color: var(--primary-color);
+        background-color: var(--primary-color);
+        color: white;
+        transform: scale(1.1);
+      }
+      .question-block {
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        background-color: var(--background-color);
+      }
+      .answer-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+      }
+      .answer-group input[type="text"] {
+        flex: 1;
+      }
+      .answer-group input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--primary-color);
+      }
+      .message-box {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background-color: var(--success-color);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        transform: translateY(-100%);
+        opacity: 0;
+        z-index: 100;
+      }
+      .message-box.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .ai-assist-section {
+        padding: 1.5rem;
+        border: 1px dashed var(--primary-color);
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        background-color: #eff6ff;
+      }
+      .ai-assist-section h3 {
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+      }
+      .ai-assist-loading {
+        text-align: center;
+        padding: 1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        display: none;
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 1rem;
+        }
+        .btn-group {
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+      }
+    
+    </style>
+    <!-- Puter.js script for Llama API access -->
+    <script src="https://js.puter.com/v2/"></script>
+    
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Quiz Creator Dashboard</h1>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard-section">
+      <div class="section">
+        <h2>Your Quizzes</h2>
+        <div id="quiz-list" class="dashboard-grid"></div>
+      </div>
+      <button id="new-quiz-btn"><i class="fas fa-plus"></i> Create New Quiz</button>
+    </div>
+
+    <!-- Create Quiz Section -->
+    <div id="create-quiz-section" style="display: none;">
+      <div class="section">
+        <h2>Create a New Quiz</h2>
+        <div class="input-group">
+          <label for="quiz-title">Quiz Title</label>
+          <input
+            type="text"
+            id="quiz-title"
+            placeholder="e.g., General Knowledge Quiz"
+            autocomplete="off"
+          />
+        </div>
+        <div class="input-group">
+          <label for="level-count">Number of Levels</label>
+          <input type="number" id="level-count" min="1" value="1" />
+        </div>
+        <div class="input-group">
+          <label>Choose a Thumbnail Icon</label>
+          <div id="icon-picker" class="icon-picker"></div>
+        </div>
+        <button id="proceed-btn">Proceed to Add Questions</button>
+        <button id="cancel-create-btn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Quiz Editor Section -->
+    <div id="quiz-editor-section" style="display: none;">
+      <div class="section">
+        <h2 id="editor-title"></h2>
+        <h3 id="level-title"></h3>
+
+        <!-- AI Assist Section -->
+        <div class="ai-assist-section">
+          <details>
+            <summary>
+              <h3><i class="fas fa-robot"></i> AI Assist (Generate Questions)</h3>
+            </summary>
+            <div class="input-group">
+              <label for="ai-prompt"
+                >Describe the topic and niche for this level:</label
+              >
+              <textarea
+                id="ai-prompt"
+                placeholder="e.g., Python loops and data structures for beginners"
+              ></textarea>
+            </div>
+            <button type="button" id="generate-ai-questions-btn">
+              <i class="fas fa-robot"></i> Generate 15 Questions
+            </button>
+            <div id="ai-loading" class="ai-assist-loading">
+              <i class="fas fa-spinner fa-spin"></i> Generating questions...
+            </div>
+          </details>
+        </div>
+
+        <form id="level-form">
+          <div id="questions-container"></div>
+          <button type="button" id="add-question-btn" class="btn-secondary">
+            <i class="fas fa-plus-circle"></i> Add Question
+          </button>
+        </form>
+        <div class="btn-group">
+          <button id="prev-level-btn" style="display: none;">
+            <i class="fas fa-arrow-left"></i> Previous Level
+          </button>
+          <button id="next-level-btn" style="display: none;">
+            Next Level <i class="fas fa-arrow-right"></i>
+          </button>
+          <button id="save-quiz-btn" class="btn-success">
+            <i class="fas fa-save"></i> Save Quiz
+          </button>
+          <button id="back-to-dashboard-btn" class="btn-danger">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Box -->
+  <div id="message-box" class="message-box"></div>
+
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = { 
+        apiKey: "AIzaSyAsrmZFUpscMyrJDwQziXjZtgjr1GvIRz8", 
+        authDomain: "meta-rooms.firebaseapp.com", 
+        databaseURL: "https://meta-rooms-default-rtdb.firebaseio.com", 
+        projectId: "meta-rooms", 
+        storageBucket: "meta-rooms.appspot.com", 
+        messagingSenderId: "572695349894", 
+        appId: "1:572695349894:web:849fe7aa642e32c1565f07", 
+        measurementId: "G-Z7WCZ5K1JM" 
+    }; 
+    firebase.initializeApp(firebaseConfig);
+
+    // Get Firebase services
+    const auth = firebase.auth();
+    const database = firebase.database();
+    const quizzesRef = database.ref('quizzes');
+    let userId = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // State variables
+      let quizzes = [];
+      let currentQuiz = null;
+      let currentLevel = 0;
+      let isEditing = false;
+
+      // DOM elements
+      const dashboardSection = document.getElementById("dashboard-section");
+      const createQuizSection = document.getElementById("create-quiz-section");
+      const quizEditorSection = document.getElementById("quiz-editor-section");
+      const quizList = document.getElementById("quiz-list");
+      const newQuizBtn = document.getElementById("new-quiz-btn");
+      const proceedBtn = document.getElementById("proceed-btn");
+      const cancelCreateBtn = document.getElementById("cancel-create-btn");
+      const addQuestionBtn = document.getElementById("add-question-btn");
+      const generateAIQuestionsBtn = document.getElementById(
+        "generate-ai-questions-btn"
+      );
+      const aiPromptTextarea = document.getElementById("ai-prompt");
+      const aiLoadingIndicator = document.getElementById("ai-loading");
+      const saveQuizBtn = document.getElementById("save-quiz-btn");
+      const backToDashboardBtn = document.getElementById("back-to-dashboard-btn");
+      const prevLevelBtn = document.getElementById("prev-level-btn");
+      const nextLevelBtn = document.getElementById("next-level-btn");
+      const questionsContainer = document.getElementById("questions-container");
+      const levelTitle = document.getElementById("level-title");
+      const editorTitle = document.getElementById("editor-title");
+      const iconPicker = document.getElementById("icon-picker");
+      const quizTitleInput = document.getElementById("quiz-title");
+      const levelCountInput = document.getElementById("level-count");
+      const messageBox = document.getElementById("message-box");
+
+      const icons = [
+        "fas fa-brain",
+        "fas fa-book",
+        "fas fa-feather-alt",
+        "fas fa-lightbulb",
+        "fas fa-rocket",
+        "fas fa-dice",
+        "fas fa-award",
+        "fas fa-globe",
+      ];
+
+      // --- Core Functions ---
+
+      // Show a temporary message to the user
+      const showMessage = (message, type = "success") => {
+        messageBox.textContent = message;
+        messageBox.className = `message-box show`;
+        if (type === "danger") {
+          messageBox.style.backgroundColor = "var(--danger-color)";
+        } else {
+          messageBox.style.backgroundColor = "var(--success-color)";
+        }
+        setTimeout(() => {
+          messageBox.classList.remove("show");
+        }, 3000);
+      };
+
+      // Listen for authentication state changes
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          // User is signed in.
+          userId = user.uid;
+          loadQuizzes();
+        } else {
+          // User is signed out.
+          window.location.href = "auth.html";
+        }
+      });
+
+      // Load quizzes from Firebase Realtime Database
+      const loadQuizzes = () => {
+        // Use onValue to get real-time updates for quizzes created by the current user
+        quizzesRef.on('value', (snapshot) => {
+          const data = snapshot.val();
+          quizzes = [];
+          if (data) {
+            // Convert the object from Firebase into an array, and filter by userId
+            for (const key in data) {
+              if (data[key].userId === userId) {
+                quizzes.push({ ...data[key], id: key });
+              }
+            }
+          }
+          renderDashboard();
+        });
+      };
+
+      // Render the dashboard with a list of quizzes
+      const renderDashboard = () => {
+        quizList.innerHTML = "";
+        if (quizzes.length === 0) {
+          quizList.innerHTML = "<p>No quizzes created yet. Start a new one!</p>";
+        } else {
+          quizzes.forEach((quiz) => {
+            const card = document.createElement("div");
+            card.className = "quiz-card";
+            card.innerHTML = `
+                            <i class="icon ${quiz.thumbnail}"></i>
+                            <h3>${quiz.title}</h3>
+                            <p>${quiz.levels.length} Level${quiz.levels.length > 1 ? "s" : ""}</p>
+                            <div class="quiz-card-footer">
+                                <p class="quiz-id">ID: ${quiz.id}</p>
+                                <button class="copy-id-btn" data-id="${quiz.id}" aria-label="Copy Quiz ID"><i class="fas fa-clipboard"></i></button>
+                            </div>
+                            <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+                        `;
+            card.querySelector(".edit-btn").addEventListener("click", (e) => {
+              e.stopPropagation();
+              editQuiz(quiz.id);
+            });
+            card.querySelector(".delete-btn").addEventListener("click", (e) => {
+              e.stopPropagation();
+              deleteQuiz(quiz.id);
+            });
+            card.querySelector(".copy-id-btn").addEventListener("click", (e) => {
+              e.stopPropagation();
+              copyToClipboard(quiz.id);
+            });
+            quizList.appendChild(card);
+          });
+        }
+
+        dashboardSection.style.display = "block";
+        createQuizSection.style.display = "none";
+        quizEditorSection.style.display = "none";
+      };
+
+      // Copy text to clipboard
+      const copyToClipboard = (text) => {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          showMessage("Quiz ID copied to clipboard!");
+        } catch (err) {
+          console.error("Failed to copy text: ", err);
+          showMessage("Failed to copy ID.", "danger");
+        }
+        document.body.removeChild(textarea);
+      };
+
+      // Start a new quiz creation process
+      const createNewQuiz = () => {
+        isEditing = false;
+        currentQuiz = null;
+        quizTitleInput.value = "";
+        levelCountInput.value = "1";
+        renderIconPicker();
+        dashboardSection.style.display = "none";
+        createQuizSection.style.display = "block";
+      };
+
+      // Edit an existing quiz
+      const editQuiz = (quizId) => {
+        const quiz = quizzes.find((q) => q.id === quizId);
+        if (quiz) {
+          currentQuiz = JSON.parse(JSON.stringify(quiz));
+          isEditing = true;
+          currentLevel = 0;
+          renderQuizEditor();
+        }
+      };
+
+      // Delete a quiz from Firebase
+      const deleteQuiz = (quizId) => {
+        const quizToDelete = quizzes.find((q) => q.id === quizId);
+        if (
+          confirm(`Are you sure you want to delete the quiz "${quizToDelete.title}"?`)
+        ) {
+          database.ref(`quizzes/${quizId}`).remove()
+            .then(() => {
+              showMessage("Quiz deleted successfully!", "danger");
+            })
+            .catch(error => {
+              console.error("Error deleting quiz:", error);
+              showMessage("Failed to delete quiz.", "danger");
+            });
+        }
+      };
+
+      // Render the icon picker
+      const renderIconPicker = (selectedIcon = null) => {
+        iconPicker.innerHTML = "";
+        icons.forEach((iconClass) => {
+          const iconBtn = document.createElement("button");
+          iconBtn.type = "button";
+          iconBtn.className = "icon-btn";
+          if (iconClass === selectedIcon) {
+            iconBtn.classList.add("selected");
+          }
+          iconBtn.innerHTML = `<i class="${iconClass}"></i>`;
+          iconBtn.addEventListener("click", () => {
+            document.querySelectorAll(".icon-btn").forEach((btn) =>
+              btn.classList.remove("selected")
+            );
+            iconBtn.classList.add("selected");
+            if (!currentQuiz) currentQuiz = {};
+            currentQuiz.thumbnail = iconClass;
+          });
+          iconPicker.appendChild(iconBtn);
+        });
+      };
+
+      // Proceed from the create form to the editor
+      const proceedToEditor = () => {
+        const title = quizTitleInput.value.trim();
+        const levelCount = parseInt(levelCountInput.value);
+        const selectedIcon = iconPicker.querySelector(".icon-btn.selected");
+
+        if (!title) {
+          showMessage("Please enter a quiz title.", "danger");
+          return;
+        }
+        if (!levelCount || levelCount < 1) {
+          showMessage("Please enter a valid number of levels.", "danger");
+          return;
+        }
+        if (!selectedIcon) {
+          showMessage("Please select a thumbnail icon.", "danger");
+          return;
+        }
+
+        currentQuiz = {
+          title: title,
+          thumbnail: selectedIcon.querySelector("i").className,
+          userId: userId, // Add the user ID to the quiz
+          levels: [],
+        };
+
+        for (let i = 0; i < levelCount; i++) {
+          currentQuiz.levels.push({ questions: [] });
+        }
+
+        currentLevel = 0;
+        renderQuizEditor();
+      };
+
+      // Render the main quiz editor
+      const renderQuizEditor = () => {
+        createQuizSection.style.display = "none";
+        dashboardSection.style.display = "none";
+        quizEditorSection.style.display = "block";
+        editorTitle.textContent = `${isEditing ? "Editing" : "Creating"} Quiz: ${
+          currentQuiz.title
+        }`;
+        renderLevelQuestions();
+      };
+
+      // Render the questions for the current level
+      const renderLevelQuestions = () => {
+        questionsContainer.innerHTML = "";
+        levelTitle.textContent = `Level ${currentLevel + 1} of ${
+          currentQuiz.levels.length
+        }`;
+        aiPromptTextarea.value = "";
+
+        prevLevelBtn.style.display = currentLevel > 0 ? "inline-block" : "none";
+        nextLevelBtn.style.display =
+          currentLevel < currentQuiz.levels.length - 1 ? "inline-block" : "none";
+
+        const levelData = currentQuiz.levels[currentLevel];
+        if (levelData.questions.length > 0) {
+          levelData.questions.forEach((q, index) => addQuestionBlock(q, index));
+        } else {
+          addQuestionBlock();
+        }
+      };
+
+      // Add a single question block to the form
+      const addQuestionBlock = (questionData = null, index = null) => {
+        const questionBlock = document.createElement("div");
+        questionBlock.className = "question-block";
+        const questionNumber =
+          index !== null ? index + 1 : questionsContainer.children.length + 1;
+        const snippet = questionData && questionData.snippet ? questionData.snippet : "";
+        const detailsOpen = snippet ? "open" : "";
+
+        questionBlock.innerHTML = `
+                    <h3>Question ${questionNumber}</h3>
+                    <div class="input-group">
+                        <label>Question Text:</label>
+                        <textarea class="question-text" placeholder="e.g., What is the capital of France?">${
+                          questionData ? questionData.question : ""
+                        }</textarea>
+                    </div>
+                    
+                    <details ${detailsOpen}>
+                        <summary>Code Snippet (Optional)</summary>
+                        <div class="input-group">
+                            <textarea class="code-snippet-textarea" placeholder="Enter a code snippet here...">${snippet}</textarea>
+                        </div>
+                    </details>
+
+                    <h4>Answers</h4>
+                    <div class="answers-container"></div>
+                `;
+
+        const answersContainer = questionBlock.querySelector(".answers-container");
+        for (let i = 0; i < 4; i++) {
+          const answerGroup = document.createElement("div");
+          answerGroup.className = "answer-group";
+          const answerInput = document.createElement("input");
+          answerInput.type = "text";
+          answerInput.placeholder = `Answer ${i + 1}`;
+          if (questionData && questionData.answers[i]) {
+            answerInput.value = questionData.answers[i].text;
+          }
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.name = `correct-answer-${questionNumber}`;
+          checkbox.id = `q${questionNumber}-ans${i}`;
+          if (questionData && questionData.answers[i] && questionData.answers[i].isCorrect) {
+            checkbox.checked = true;
+          }
+
+          answerGroup.appendChild(answerInput);
+          answerGroup.appendChild(checkbox);
+          answersContainer.appendChild(answerGroup);
+        }
+        questionsContainer.appendChild(questionBlock);
+      };
+
+           // Generate questions using AI with the Puter.js Llama API
+      const generateQuestionsWithAI = async () => {
+        const promptText = aiPromptTextarea.value.trim();
+        if (!promptText) {
+          showMessage(
+            "Please describe the quiz topic for the AI to generate questions.",
+            "danger"
+          );
+          return;
+        }
+
+        aiLoadingIndicator.style.display = "block";
+        generateAIQuestionsBtn.disabled = true;
+
+        // Updated system prompt to be more direct about the output format
+        const systemPrompt = `You are a helpful assistant that generates 15 multiple-choice questions about the given topic. Each question must have:
+- "question": string
+- "snippet": string (can be empty)
+- "answers": array of 4 objects with "text" (string) and "isCorrect" (boolean), exactly one true.
+Return ONLY the JSON array of question objects. Do not include any other text, commentary, or Markdown code block indicators like "\`\`\`json" or "\`\`\`".`;
+        
+        const userPrompt = `Topic: ${promptText}`;
+        const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+
+        try {
+          const response = await puter.ai.chat(
+            fullPrompt,
+            { model: 'meta-llama/llama-3.1-8b-instruct' }
+          );
+
+          console.log("AI Response:", response);
+
+          if (response && response.message && response.message.content) {
+            let generatedText = response.message.content.trim();
+            // A more robust way to handle potential code blocks or leading text
+            if (generatedText.startsWith("```json")) {
+                generatedText = generatedText.substring("```json".length);
+            }
+            if (generatedText.endsWith("```")) {
+                generatedText = generatedText.substring(0, generatedText.length - "```".length);
+            }
+            // Trim again to remove any newlines after the code block marker
+            generatedText = generatedText.trim();
+
+            try {
+              const generatedQuestions = JSON.parse(generatedText);
+
+              if (
+                Array.isArray(generatedQuestions) &&
+                generatedQuestions.length >= 15 &&
+                generatedQuestions.every(
+                  (q) =>
+                    typeof q.question === "string" &&
+                    typeof q.snippet === "string" &&
+                    Array.isArray(q.answers) &&
+                    q.answers.length === 4 &&
+                    q.answers.filter((a) => a.isCorrect === true).length === 1
+                )
+              ) {
+                // Trim to exactly 15 questions if more returned
+                currentQuiz.levels[currentLevel].questions = generatedQuestions.slice(0, 15);
+                renderLevelQuestions();
+                showMessage("Successfully generated questions with AI!");
+              } else {
+                console.error("Generated questions format invalid.", generatedQuestions);
+                showMessage("Generated questions format invalid.", "danger");
+              }
+            } catch (err) {
+              console.error("JSON parse error:", err, "Attempted to parse:", generatedText);
+              showMessage(
+                "Failed to parse AI response. The response may not have been valid JSON.",
+                "danger"
+              );
+            }
+          } else {
+            console.error("Invalid or empty response from AI.", response);
+            showMessage(
+              "Invalid or empty response from AI.",
+              "danger"
+            );
+          }
+        } catch (error) {
+          console.error("Error generating questions with AI:", error);
+          showMessage(
+            "An error occurred while generating questions. Please try again.",
+            "danger"
+          );
+        } finally {
+          aiLoadingIndicator.style.display = "none";
+          generateAIQuestionsBtn.disabled = false;
+        }
+      };
+
+      // Navigate to the next level
+      const nextLevel = () => {
+        if (!saveLevelData()) return;
+        if (currentLevel < currentQuiz.levels.length - 1) {
+          currentLevel++;
+          renderLevelQuestions();
+        }
+      };
+
+      // Navigate to the previous level
+      const prevLevel = () => {
+        if (!saveLevelData()) return;
+        if (currentLevel > 0) {
+          currentLevel--;
+          renderLevelQuestions();
+        }
+      };
+
+      // Save the data from the current level's form into the currentQuiz object
+      // Returns true if successful, false if validation fails
+      const saveLevelData = () => {
+        const levelQuestions = [];
+        const questionBlocks = questionsContainer.querySelectorAll(".question-block");
+
+        for (const block of questionBlocks) {
+          const questionText = block.querySelector(".question-text").value.trim();
+          const snippetText = block.querySelector(".code-snippet-textarea").value.trim();
+          const answers = [];
+          let hasCorrectAnswer = false;
+
+          const answerGroups = block.querySelectorAll(".answer-group");
+          for (const group of answerGroups) {
+            const answerText = group.querySelector('input[type="text"]').value.trim();
+            const isCorrect = group.querySelector('input[type="checkbox"]').checked;
+            answers.push({ text: answerText, isCorrect: isCorrect });
+            if (isCorrect) hasCorrectAnswer = true;
+          }
+
+          if (questionText) {
+            if (!hasCorrectAnswer) {
+              showMessage("Each question must have one correct answer selected.", "danger");
+              return false;
+            }
+            levelQuestions.push({ question: questionText, snippet: snippetText, answers });
+          }
+        }
+
+        currentQuiz.levels[currentLevel].questions = levelQuestions;
+        return true;
+      };
+
+      // Final save of the quiz to Firebase
+      const saveQuiz = () => {
+        if (!saveLevelData()) return;
+
+        if (!currentQuiz.levels.some((level) => level.questions.length > 0)) {
+          showMessage("Quiz must have at least one question to be saved.", "danger");
+          return;
+        }
+
+        if (isEditing) {
+          // Update an existing quiz in Firebase using its ID
+          database.ref(`quizzes/${currentQuiz.id}`).update(currentQuiz)
+            .then(() => {
+              showMessage("Quiz updated successfully!");
+              renderDashboard();
+            })
+            .catch(error => {
+              console.error("Error updating quiz:", error);
+              showMessage("Failed to update quiz.", "danger");
+            });
+        } else {
+          // Push a new quiz to Firebase, which generates a unique ID
+          quizzesRef.push(currentQuiz)
+            .then(() => {
+              showMessage("Quiz saved successfully!");
+              renderDashboard();
+            })
+            .catch(error => {
+              console.error("Error saving quiz:", error);
+              showMessage("Failed to save quiz.", "danger");
+            });
+        }
+      };
+
+      // --- Event Listeners and Initial Load ---
+      newQuizBtn.addEventListener("click", createNewQuiz);
+      cancelCreateBtn.addEventListener("click", renderDashboard);
+      proceedBtn.addEventListener("click", proceedToEditor);
+      addQuestionBtn.addEventListener("click", () => addQuestionBlock());
+      generateAIQuestionsBtn.addEventListener("click", generateQuestionsWithAI);
+      prevLevelBtn.addEventListener("click", prevLevel);
+      nextLevelBtn.addEventListener("click", nextLevel);
+      saveQuizBtn.addEventListener("click", saveQuiz);
+      backToDashboardBtn.addEventListener("click", renderDashboard);
+    });
+  </script>
+</body>
+</html>

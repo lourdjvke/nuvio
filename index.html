@@ -1,0 +1,1758 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nuvio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#f7f7f7" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        /* Duolingo-like color palette */
+        --primary-color: #58cc02; /* Duolingo Green */
+        --primary-dark-color: #58a700;
+        --secondary-color: #e5e5e5; /* Light gray */
+        --background-color: #f7f7f7; /* Off-white */
+        --text-color: #3c3c3c;
+        --card-bg-color: #ffffff;
+        --border-color: #e0e0e0;
+        --disabled-color: #d8d8d8;
+        --correct-color: #58cc02;
+        --incorrect-color: #ff4b4b;
+        --progress-bg-color: #e5e5e5;
+        --purple-color: #8c42ff;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+      .container {
+        background-color: var(--card-bg-color);
+        padding: 1rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        border: 2px solid var(--border-color);
+        min-height: 100vh;
+      }
+      h1,
+      h2,
+      h3 {
+        font-weight: 700;
+        margin-top: 0;
+        text-align: center;
+      }
+      h1 {
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+      h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+        text-align: left;
+        margin-left: 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+      .section {
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+      }
+
+      /* Landing Page Styles (now the main quiz list page) */
+      #landing-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .quiz-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        width: 100%;
+      }
+      .quiz-card {
+        background-color: var(--secondary-color);
+        padding: 1.5rem 1rem;
+        border-radius: 1.25rem; /* More rounded */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 2px solid var(--border-color);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+      .quiz-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
+      .quiz-card .icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+      }
+      .quiz-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+      .quiz-card-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+      }
+
+      button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 1rem; /* More rounded */
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 0 var(--primary-dark-color);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        background-color: var(--primary-dark-color);
+        box-shadow: 0 6px 0 var(--primary-dark-color);
+      }
+      button:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 var(--primary-dark-color);
+      }
+      /* Specific styling for back buttons to fix text color issue */
+      button#back-to-home-from-quiz-btn,
+      button#back-to-levels-btn {
+        background-color: transparent;
+        color: var(--purple-color);
+        box-shadow: none;
+        text-transform: none;
+      }
+      button#back-to-home-from-quiz-btn:hover,
+      button#back-to-levels-btn:hover {
+        background-color: #f0f0f0;
+        transform: none;
+        box-shadow: none;
+      }
+      button#back-to-home-from-quiz-btn:active,
+      button#back-to-levels-btn:active {
+        transform: none;
+      }
+
+      /* Quiz Main Page Styles */
+      #main-quiz-page {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+      .level-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1.5rem;
+        width: 100%;
+      }
+      .level-card {
+        background-color: var(--secondary-color);
+        padding: 1.5rem 1rem;
+        border-radius: 1.25rem; /* More rounded */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 2px solid var(--border-color);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+      .level-card:not(.locked):hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
+      .level-card.locked {
+        background-color: var(--disabled-color);
+        cursor: not-allowed;
+        color: #6b7280;
+        box-shadow: none;
+        transform: none;
+      }
+
+      /* Completed level styling */
+      .level-card.completed {
+        background-color: var(--correct-color);
+        color: white;
+        border-color: var(--primary-dark-color);
+        box-shadow: 0 4px 0 var(--primary-dark-color);
+        cursor: pointer; /* Can still click on completed levels to re-do them */
+      }
+      .level-card.completed:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .level-card .icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+      }
+      .level-card.completed .icon {
+        color: white;
+      }
+      .level-card.locked .icon {
+        color: #9ca3af;
+      }
+      .level-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+      .level-card-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+      }
+      .level-card.completed .level-card-info {
+        color: white;
+      }
+      .level-card-stars {
+        font-size: 1.5rem;
+        color: #ffd700; /* Gold */
+        margin-top: 0.5rem;
+        height: 1.5rem; /* Ensure consistent height */
+      }
+      .level-card-stars .far.fa-star {
+        color: #e0e0e0;
+      }
+
+      /* Question Page Styles */
+      #question-page {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* New styling for progress bar */
+      .progress-container {
+        width: 100%;
+        height: 16px; /* Taller progress bar */
+        background-color: var(--progress-bg-color);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .progress-bar {
+        height: 100%;
+        width: 0;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease-in-out;
+      }
+      #question-text {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 1rem;
+        background-color: #ffffff;
+        border-radius: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+        border: 2px solid var(--border-color);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #snippet-container {
+        width: 100%;
+        padding: 1rem;
+        background-color: #2d2d2d;
+        border-radius: 1rem;
+        color: #f7f7f7;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-x: auto;
+        max-height: 200px;
+      }
+      .answers-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Stacked buttons for a more mobile-friendly, Duolingo-like feel */
+        gap: 1rem;
+        width: 100%;
+        padding-bottom: 1em;
+      }
+      .answer-button {
+        background-color: var(--card-bg-color);
+        color: var(--text-color);
+        border: 2px solid var(--border-color);
+        border-radius: 1.5rem; /* More rounded */
+        padding: 1.25rem 1rem; /* More padding */
+        font-size: 1.1rem; /* Larger font */
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, border-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        text-align: left;
+        box-shadow: 0 4px 0 var(--border-color);
+        position: relative;
+        overflow: hidden;
+      }
+      .answer-button:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 0 var(--primary-dark-color);
+      }
+      .answer-button.correct {
+        background-color: var(--correct-color);
+        border-color: var(--correct-color);
+        color: white; /* Ensures text is visible */
+        box-shadow: 0 4px 0 var(--primary-dark-color);
+        animation: popBounce 0.3s ease forwards;
+      }
+      .answer-button.correct:hover {
+        background-color: var(--primary-dark-color);
+        border-color: var(--primary-dark-color);
+      }
+      .answer-button.incorrect {
+        background-color: var(--incorrect-color);
+        border-color: var(--incorrect-color);
+        color: white; /* Ensures text is visible */
+        box-shadow: 0 4px 0 #d93d3d;
+        animation: shake 0.3s ease forwards;
+      }
+      .answer-button.incorrect:hover {
+        background-color: #d93d3d;
+        border-color: #d93d3d;
+      }
+      .answer-button.disabled {
+        pointer-events: none;
+        opacity: 0.6;
+      }
+      .answer-button:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 var(--border-color);
+      }
+      .answer-button.correct:active {
+        box-shadow: 0 2px 0 var(--primary-dark-color);
+      }
+      .answer-button.incorrect:active {
+        box-shadow: 0 2px 0 #d93d3d;
+      }
+
+      @keyframes popBounce {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.15);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes shake {
+        0% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        50% {
+          transform: translateX(5px);
+        }
+        75% {
+          transform: translateX(-5px);
+        }
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      /* Modal/Feedback Styles */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        padding: 0.6rem;
+      }
+      .modal-content {
+        background-color: var(--card-bg-color);
+        padding: 3rem;
+        border-radius: 2rem;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+        animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        position: relative;
+      }
+      @keyframes bounceIn {
+        0% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .modal-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .modal-correct h3 {
+        color: var(--correct-color);
+      }
+      .modal-incorrect h3 {
+        color: var(--incorrect-color);
+      }
+      .modal-footer {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .modal-footer button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 1em;
+        font-size: 0.8em;
+        border-radius: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+        text-transform: uppercase;
+        box-shadow: 0 4px 0 var(--primary-dark-color);
+        min-width: 120px;
+      }
+      .modal-footer button.secondary {
+        background-color: transparent;
+        color: var(--purple-color);
+        box-shadow: none;
+        text-transform: none;
+      }
+      .modal-footer button.redo-btn {
+        background-color: var(--incorrect-color);
+        box-shadow: 0 4px 0 #d93d3d;
+      }
+      .modal-footer button.redo-btn:hover {
+        background-color: #d93d3d;
+        box-shadow: 0 6px 0 #c22f2f;
+        transform: translateY(-2px);
+      }
+      .modal-footer button.redo-btn:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 #c22f2f;
+      }
+      .modal-footer button.continue-btn {
+        background-color: var(--primary-color);
+        box-shadow: 0 4px 0 var(--primary-dark-color);
+      }
+      .modal-footer button.continue-btn:hover {
+        background-color: var(--primary-dark-color);
+        box-shadow: 6px 0 var(--primary-dark-color);
+        transform: translateY(-2px);
+      }
+      .modal-footer button.continue-btn:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 var(--primary-dark-color);
+      }
+
+      /* New styling for star rating in modal*/
+      .stars {
+        font-size: 2.5rem;
+        color: #ffd700; /* Gold */
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 0.25rem;
+      }
+      .stars .fa-star {
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
+        animation: pulseStar 0.5s ease-in-out;
+      }
+      @keyframes pulseStar {
+        0% {
+          transform: scale(0.5);
+          opacity: 0.5;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .stars .far.fa-star {
+        color: var(--border-color);
+        animation: none;
+      }
+
+      /* New styling for failed questions list */
+      .failed-questions-list {
+        margin-top: 1rem;
+        text-align: left;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+      .failed-questions-list h4 {
+        font-size: 1.1rem;
+        color: var(--incorrect-color);
+        margin-bottom: 0.5rem;
+      }
+      .failed-questions-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .failed-questions-list li {
+        background-color: #fcebeb;
+        border: 1px solid var(--incorrect-color);
+        border-radius: 0.75rem;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 0;
+        }
+        .answers-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Loading Screen Styles */
+      #loading-page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 1001;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      /* animte loaidng image to pulse and hover */
+        #loading-page img {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+      div#all-quizzes-section,
+      div#recent-quizzes-section {
+        width: 100%;
+      }
+      div#failed-questions-section {
+        font-size: 0.7em;
+        margin: 1em 0;
+      }
+
+      /* Leaderboard Styles */
+      #leaderboard-page {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+      }
+      #leaderboard-page h2 {
+        margin-left: 1rem;
+        align-self: flex-start;
+      }
+      #leaderboard-list {
+        width: 100%;
+        max-width: 600px;
+        border: 2px solid var(--border-color);
+        border-radius: 1rem;
+        background-color: var(--card-bg-color);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
+      #leaderboard-list table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      #leaderboard-list th,
+      #leaderboard-list td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+      #leaderboard-list th {
+        background-color: var(--secondary-color);
+        font-weight: 700;
+      }
+      #leaderboard-list tr:last-child td {
+        border-bottom: none;
+      }
+      #leaderboard-list tbody tr:hover {
+        background-color: var(--progress-bg-color);
+      }
+
+      /* Tabs */
+      #tabs {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      #tabs button {
+        background-color: var(--secondary-color);
+        border: 2px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 0.5rem 1.5rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      #tabs button.active {
+        background-color: var(--primary-color);
+        border-color: var(--primary-dark-color);
+        color: white;
+      }
+
+      /* Streak and XP display */
+      #user-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        user-select: none;
+      }
+      #user-stats > div {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      #user-stats i {
+        font-size: 1.5rem;
+      }
+
+      /* Badge container */
+      #badges-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .badge {
+        background-color: var(--secondary-color);
+        border-radius: 1rem;
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        cursor: default;
+        user-select: none;
+        transition: background-color 0.3s;
+      }
+      .badge.earned {
+        background-color: var(--primary-color);
+        color: white;
+        box-shadow: 0 4px 8px rgba(88, 204, 2, 0.6);
+      }
+      .badge i {
+        font-size: 1.5rem;
+      }
+      .badge span {
+        font-weight: 600;
+      }
+
+      /* Confetti container */
+      #confetti-container {
+        pointer-events: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: visible;
+        z-index: 1100;
+      }
+        div#recent-quizzes-container .quiz-card {
+    display: inline-flex
+;
+    margin: 0 .7em;
+    min-width: 15em;
+}
+div#recent-quizzes-container {
+    white-space: nowrap;
+    overflow: scroll;
+    display: block;
+        padding: 1em 0;
+}
+i.fas.fa-fire {
+  /* gradient red to orange */
+  background: linear-gradient(45deg, #ff0000, #ff7f00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+    </style>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+    <div id="loading-page">
+        <img src="pandaleid.png" style="width: 100px; height: 100px; margin-bottom: 1rem;" alt="Loading" />
+    </div>
+
+    <div class="container" style="display: none;">
+        <div id="tabs" class="mb-4">
+            <button id="tab-home" class="active" aria-controls="landing-page" aria-selected="true" role="tab">Home</button>
+            <button id="tab-leaderboard" aria-controls="leaderboard-page" aria-selected="false" role="tab">Leaderboard</button>
+        </div>
+
+        <div id="user-stats" class="mb-4" aria-live="polite" aria-atomic="true">
+            <div title="Current Streak">
+                <i class="fas fa-fire"></i>
+                <span id="streak-count">0</span> day streak
+            </div>
+            <div title="Total Experience Points">
+                <i class="fas fa-star"></i>
+                <span id="xp-count">0</span> XP
+            </div>
+        </div>
+
+        <!-- Landing Page: Quiz List -->
+        <div id="landing-page" role="tabpanel" tabindex="0" aria-label="Home tab content">
+            <h1>Nuvio</h1>
+
+            <div id="recent-quizzes-section">
+                <h2>Recent Quizzes</h2>
+                <div id="recent-quizzes-container" class="quiz-grid">
+                    <p>No recent quizzes found. Start a new one!</p>
+                </div>
+            </div>
+
+            <div id="all-quizzes-section">
+                <h2>All Quizzes</h2>
+                <div id="all-quizzes-container" class="quiz-grid">
+                    <p>Loading quizzes...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Page -->
+        <div id="leaderboard-page" role="tabpanel" tabindex="0" aria-label="Leaderboard tab content" style="display:none;">
+            <h2>Leaderboard</h2>
+            <div id="leaderboard-list" aria-live="polite" aria-atomic="true">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Rank</th>
+                            <th scope="col">User</th>
+                            <th scope="col">XP</th>
+                            <th scope="col">Streak</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-tbody">
+                        <tr><td colspan="4" class="text-center p-4">Loading leaderboard...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Main Quiz Page: Level Selection -->
+        <div id="main-quiz-page" style="display: none;">
+            <div id="quiz-header">
+                <h2 id="quiz-title"></h2>
+                <h3 id="quiz-description" style="text-align: center;">Select a Level</h3>
+            </div>
+            <div id="levels-container" class="level-grid"></div>
+            <button id="back-to-home-from-quiz-btn" style="width: 100%; max-width: 200px;">Back to Home</button>
+        </div>
+
+        <!-- Question Page: Take the Quiz -->
+        <div id="question-page" style="display: none;">
+            <button id="back-to-levels-btn">Back to Levels</button>
+            <div class="progress-container" aria-label="Quiz progress">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <p id="current-question-counter" aria-live="polite" aria-atomic="true"></p>
+            <div id="question-text"></div>
+            <pre id="snippet-container" style="display: none;"></pre>
+            <div id="answers-container" class="answers-grid" role="list"></div>
+        </div>
+
+        <!-- Badges Container -->
+        <div id="badges-container" aria-label="User badges" role="region" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-message">
+        <div id="modal-content" class="modal-content">
+            <h3 id="modal-title"></h3>
+            <p id="modal-message"></p>
+            <div id="failed-questions-section" style="display: none;">
+                <h4>Failed Questions:</h4>
+                <ul id="failed-questions-list"></ul>
+            </div>
+            <div id="stars-container" class="stars" style="display: none;"></div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+
+    <!-- Confetti container -->
+    <div id="confetti-container" aria-hidden="true"></div>
+
+    <script>
+      // Initialize Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyAsrmZFUpscMyrJDwQziXjZtgjr1GvIRz8",
+        authDomain: "meta-rooms.firebaseapp.com",
+        databaseURL: "https://meta-rooms-default-rtdb.firebaseio.com",
+        projectId: "meta-rooms",
+        storageBucket: "meta-rooms.appspot.com",
+        messagingSenderId: "572695349894",
+        appId: "1:572695349894:web:849fe7aa642e32c1565f07",
+        measurementId: "G-Z7WCZ5K1JM",
+      };
+      firebase.initializeApp(firebaseConfig);
+
+      // Get Firebase services
+      const auth = firebase.auth();
+      const database = firebase.database();
+      let userId = null;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- DOM Elements ---
+        const mainContainer = document.querySelector(".container");
+        const loadingPage = document.getElementById("loading-page");
+        const landingPage = document.getElementById("landing-page");
+        const mainQuizPage = document.getElementById("main-quiz-page");
+        const questionPage = document.getElementById("question-page");
+        const allQuizzesContainer = document.getElementById("all-quizzes-container");
+        const recentQuizzesContainer = document.getElementById("recent-quizzes-container");
+        const allQuizzesSection = document.getElementById("all-quizzes-section");
+        const recentQuizzesSection = document.getElementById("recent-quizzes-section");
+        const quizTitleEl = document.getElementById("quiz-title");
+        const levelsContainer = document.getElementById("levels-container");
+        const backToHomeFromQuizBtn = document.getElementById("back-to-home-from-quiz-btn");
+        const backToLevelsBtn = document.getElementById("back-to-levels-btn");
+        const questionTextEl = document.getElementById("question-text");
+        const snippetContainer = document.getElementById("snippet-container");
+        const answersContainer = document.getElementById("answers-container");
+        const feedbackModal = document.getElementById("feedback-modal");
+        const modalContent = document.getElementById("modal-content");
+        const modalTitle = document.getElementById("modal-title");
+        const modalMessage = document.getElementById("modal-message");
+        const modalFooter = modalContent.querySelector(".modal-footer");
+        const progressBar = document.getElementById("progress-bar");
+        const currentQuestionCounter = document.getElementById("current-question-counter");
+        const starsContainer = document.getElementById("stars-container");
+        const failedQuestionsSection = document.getElementById("failed-questions-section");
+        const failedQuestionsList = document.getElementById("failed-questions-list");
+        const badgesContainer = document.getElementById("badges-container");
+        const streakCountEl = document.getElementById("streak-count");
+        const xpCountEl = document.getElementById("xp-count");
+        const confettiContainer = document.getElementById("confetti-container");
+
+        // Tabs
+        const tabHomeBtn = document.getElementById("tab-home");
+        const tabLeaderboardBtn = document.getElementById("tab-leaderboard");
+        const leaderboardPage = document.getElementById("leaderboard-page");
+        const leaderboardTbody = document.getElementById("leaderboard-tbody");
+
+        // --- State Variables ---
+        let quizzes = {}; // Use an object for easier lookup by ID
+        let userProgress = {};
+        let selectedQuiz = null;
+        let currentLevel = null;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let totalQuestionsInLevel = 0;
+        let failedQuestions = []; // New array to store failed questions
+        let quizzesLoaded = false;
+        let progressLoaded = false;
+        let isQuizInProgress = false; // New flag to prevent redirects while playing
+
+        // User stats
+        let userStreak = 0;
+        let userXP = 0;
+        let userBadges = [];
+
+        // Audio elements for feedback sounds
+        const correctAudio = new Audio("/right.mp3");
+        const wrongAudio = new Audio("/wrong.mp3");
+
+        // --- Utility Functions ---
+        const showPage = (pageToShow) => {
+          const allPages = [landingPage, mainQuizPage, questionPage, leaderboardPage];
+          allPages.forEach((page) => {
+            if (page === pageToShow) {
+              page.style.display = "flex";
+              page.setAttribute("tabindex", "0");
+            } else {
+              page.style.display = "none";
+              page.removeAttribute("tabindex");
+            }
+          });
+        };
+
+        const renderQuizCard = (id, quiz) => {
+          const quizCard = document.createElement("div");
+          quizCard.className = "quiz-card";
+          quizCard.innerHTML = `
+                    <i class="${quiz.thumbnail} icon" aria-hidden="true"></i>
+                    <h3>${quiz.title}</h3>
+                    <div class="quiz-card-info">
+                        <p>${quiz.levels.length} levels</p>
+                    </div>
+                `;
+          quizCard.addEventListener("click", () => {
+            selectedQuiz = { ...quiz, id: id };
+            renderQuizMainPage();
+            showPage(mainQuizPage);
+          });
+          return quizCard;
+        };
+
+        // Refactored to separate the rendering from the data listener
+        const renderQuizLists = () => {
+          // Render all quizzes
+          allQuizzesContainer.innerHTML = "";
+          const allQuizIds = Object.keys(quizzes);
+          if (allQuizIds.length > 0) {
+            allQuizIds.forEach((id) => {
+              allQuizzesContainer.appendChild(renderQuizCard(id, quizzes[id]));
+            });
+            allQuizzesSection.style.display = "block";
+          } else {
+            allQuizzesContainer.innerHTML =
+              "<p>No quizzes available yet. Check back later!</p>";
+            allQuizzesSection.style.display = "block";
+          }
+
+          // Render recent quizzes
+          recentQuizzesContainer.innerHTML = "";
+          if (userProgress.recentQuizzes && Object.keys(userProgress.recentQuizzes).length > 0) {
+            const recentQuizIds = Object.keys(userProgress.recentQuizzes).sort(
+              (a, b) => userProgress.recentQuizzes[b] - userProgress.recentQuizzes[a]
+            );
+            recentQuizIds.forEach((id) => {
+              if (quizzes[id]) {
+                recentQuizzesContainer.appendChild(renderQuizCard(id, quizzes[id]));
+              }
+            });
+            recentQuizzesSection.style.display = "block";
+          } else {
+            recentQuizzesContainer.innerHTML = "<p>You haven't started any quizzes yet.</p>";
+            recentQuizzesSection.style.display = "block";
+          }
+          showPage(landingPage);
+        };
+
+        // Render badges
+        const renderBadges = () => {
+          badgesContainer.innerHTML = "";
+          if (!userBadges.length) {
+            badgesContainer.innerHTML = `<p class="text-center text-gray-500">No badges earned yet.</p>`;
+            return;
+          }
+          userBadges.forEach((badge) => {
+            const badgeEl = document.createElement("div");
+            badgeEl.className = "badge earned";
+            badgeEl.setAttribute("title", badge.description);
+            badgeEl.setAttribute("tabindex", "0");
+            badgeEl.innerHTML = `<i class="${badge.icon}" aria-hidden="true"></i><span>${badge.name}</span>`;
+            badgesContainer.appendChild(badgeEl);
+          });
+        };
+
+        // Update streak and XP display
+        const updateUserStatsDisplay = () => {
+          streakCountEl.textContent = userStreak;
+          xpCountEl.textContent = userXP;
+        };
+
+        // Calculate and update streak from userProgress
+        const calculateStreak = () => {
+          if (!userProgress.lastQuizDate) {
+            userStreak = 0;
+            return;
+          }
+          const lastDate = new Date(userProgress.lastQuizDate);
+          const today = new Date();
+          // Normalize times to midnight
+          lastDate.setHours(0, 0, 0, 0);
+          today.setHours(0, 0, 0, 0);
+          const diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+          if (diffDays === 1) {
+            userStreak = (userProgress.streak || 0);
+          } else if (diffDays > 1) {
+            userStreak = 0;
+          } else {
+            userStreak = userProgress.streak || 0;
+          }
+        };
+
+        // Load badges based on progress
+        const loadBadges = () => {
+          const badges = [];
+
+          // First Quiz Complete
+          if (userProgress.firstQuizComplete) {
+            badges.push({
+              name: "First Quiz Complete",
+              description: "Completed your first quiz!",
+              icon: "fas fa-check-circle",
+            });
+          }
+          // 5-Day Streak
+          if (userStreak >= 5) {
+            badges.push({
+              name: "5-Day Streak",
+              description: "Maintained a 5-day streak!",
+              icon: "fas fa-fire",
+            });
+          }
+          // Master of Python Basics (example badge)
+          if (userProgress.masterPythonBasics) {
+            badges.push({
+              name: "Master of Python Basics",
+              description: "Completed all Python Basics levels!",
+              icon: "fas fa-python",
+            });
+          }
+          userBadges = badges;
+          renderBadges();
+        };
+
+        // This function is now responsible for setting up all data listeners
+        const loadAllData = () => {
+          // Listen for all quizzes (this should only fire once)
+          database.ref("quizzes").once("value", (snapshot) => {
+            quizzes = snapshot.val() || {};
+            quizzesLoaded = true;
+            if (progressLoaded) {
+              loadingPage.style.display = "none";
+              mainContainer.style.display = "flex";
+              renderQuizLists();
+              updateUserStatsDisplay();
+              loadBadges();
+            }
+          });
+
+          // Listen for user progress (this should only fire once, but use a listener for real-time updates)
+          database.ref(`users/${userId}/progress`).on("value", (snapshot) => {
+            userProgress = snapshot.val() || {};
+            progressLoaded = true;
+
+            // Update streak and XP
+            calculateStreak();
+            userXP = userProgress.totalXP || 0;
+
+            // Load badges
+            loadBadges();
+
+            updateUserStatsDisplay();
+
+            // --- THE FIX IS HERE ---
+            // Only re-render if a quiz is not currently in progress.
+            if (!isQuizInProgress) {
+              if (landingPage.style.display !== "none") {
+                renderQuizLists();
+              }
+              if (mainQuizPage.style.display !== "none" && selectedQuiz) {
+                renderQuizMainPage();
+              }
+            }
+            if (quizzesLoaded) {
+              loadingPage.style.display = "none";
+              mainContainer.style.display = "flex";
+            }
+          });
+
+          // Listen for leaderboard data
+          database.ref("leaderboard").on("value", (snapshot) => {
+            const leaderboardData = snapshot.val() || {};
+            renderLeaderboard(leaderboardData);
+          });
+        };
+
+        const renderLeaderboard = (leaderboardData) => {
+          // leaderboardData is expected to be an object with userId keys and { displayName, xp, streak } values
+          const entries = Object.entries(leaderboardData);
+          if (!entries.length) {
+            leaderboardTbody.innerHTML = `<tr><td colspan="4" class="text-center p-4">No leaderboard data available.</td></tr>`;
+            return;
+          }
+          // Sort by XP descending, then streak descending
+          entries.sort((a, b) => {
+            if (b[1].xp !== a[1].xp) return b[1].xp - a[1].xp;
+            return b[1].streak - a[1].streak;
+          });
+
+          leaderboardTbody.innerHTML = "";
+          entries.forEach(([uid, data], index) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${data.displayName || "Anonymous"}</td>
+              <td>${data.xp || 0}</td>
+              <td>${data.streak || 0}</td>
+            `;
+            leaderboardTbody.appendChild(tr);
+          });
+        };
+
+        const renderQuizMainPage = () => {
+          showPage(mainQuizPage);
+          quizTitleEl.textContent = selectedQuiz.title;
+          levelsContainer.innerHTML = "";
+
+          const quizProgress = userProgress[selectedQuiz.id] || {};
+
+          selectedQuiz.levels.forEach((level, index) => {
+            const levelCard = document.createElement("div");
+            levelCard.className = "level-card";
+
+            const levelStars = quizProgress[index] || 0;
+
+            if (levelStars > 0) {
+              levelCard.classList.add("completed");
+            }
+
+            let starsHtml = "";
+            for (let i = 0; i < 3; i++) {
+              starsHtml += `<i class="${i < levelStars ? "fas" : "far"} fa-star"></i>`;
+            }
+
+            levelCard.innerHTML = `
+                        <i class="${selectedQuiz.thumbnail} icon" aria-hidden="true"></i>
+                        <h3>Level ${index + 1}</h3>
+                        <div class="level-card-info">
+                          <p>${level.questions.length} questions</p>
+                        </div>
+                        <div class="level-card-stars" aria-label="${levelStars} star(s) earned">
+                            ${starsHtml}
+                        </div>
+                    `;
+            levelCard.addEventListener("click", () => {
+              startLevel(index);
+            });
+            levelsContainer.appendChild(levelCard);
+          });
+        };
+
+        const startLevel = (levelIndex) => {
+          if (!userId) {
+            window.location.href = "auth.html";
+            return;
+          }
+
+          currentLevel = levelIndex;
+          currentQuestions = [...selectedQuiz.levels[currentLevel].questions]; // Clone the questions array
+          totalQuestionsInLevel = currentQuestions.length; // Store the initial count
+          currentQuestionIndex = 0;
+          failedQuestions = []; // Reset failed questions
+
+          // Add this quiz to recent quizzes with a timestamp
+          const recentQuizzesRef = database.ref(
+            `users/${userId}/progress/recentQuizzes/${selectedQuiz.id}`
+          );
+          recentQuizzesRef.set(firebase.database.ServerValue.TIMESTAMP);
+
+          // --- THE FIX IS HERE ---
+          // Set the flag to prevent the listener from redirecting
+          isQuizInProgress = true;
+
+          renderQuestion(true);
+          showPage(questionPage);
+        };
+
+        // Animate question transition
+        const renderQuestion = (firstRender = false) => {
+          if (currentQuestionIndex < currentQuestions.length) {
+            const question = currentQuestions[currentQuestionIndex];
+
+            // Animate fade out and slide left of old question if not first render
+            if (!firstRender) {
+              questionTextEl.style.opacity = "0";
+              questionTextEl.style.transform = "translateX(50px)";
+              answersContainer.style.opacity = "0";
+              answersContainer.style.transform = "translateX(50px)";
+              snippetContainer.style.opacity = "0";
+              snippetContainer.style.transform = "translateX(50px)";
+              setTimeout(() => {
+                updateQuestionContent(question);
+                questionTextEl.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+                answersContainer.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+                snippetContainer.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+                questionTextEl.style.opacity = "1";
+                questionTextEl.style.transform = "translateX(0)";
+                answersContainer.style.opacity = "1";
+                answersContainer.style.transform = "translateX(0)";
+                snippetContainer.style.opacity = "1";
+                snippetContainer.style.transform = "translateX(0)";
+              }, 300);
+            } else {
+              updateQuestionContent(question);
+              questionTextEl.style.opacity = "1";
+              questionTextEl.style.transform = "translateX(0)";
+              answersContainer.style.opacity = "1";
+              answersContainer.style.transform = "translateX(0)";
+              snippetContainer.style.opacity = "1";
+              snippetContainer.style.transform = "translateX(0)";
+            }
+
+            // Update progress bar and counter
+            const progress = (currentQuestionIndex / totalQuestionsInLevel) * 100;
+            progressBar.style.width = `${progress}%`;
+            currentQuestionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${totalQuestionsInLevel}`;
+          } else {
+            // All questions in the current array have been answered
+            showResults();
+          }
+        };
+
+        const updateQuestionContent = (question) => {
+          questionTextEl.textContent = question.question;
+          answersContainer.innerHTML = "";
+
+          // Show/hide snippet
+          if (question.snippet) {
+            snippetContainer.textContent = question.snippet;
+            snippetContainer.style.display = "block";
+          } else {
+            snippetContainer.style.display = "none";
+          }
+
+          // Create shuffled answer buttons
+          const shuffledAnswers = [...question.answers].sort(() => Math.random() - 0.5);
+          shuffledAnswers.forEach((answer) => {
+            const button = document.createElement("button");
+            button.className = "answer-button";
+            button.textContent = answer.text;
+            button.setAttribute("role", "listitem");
+            button.addEventListener("click", () => checkAnswer(button, answer.isCorrect));
+            answersContainer.appendChild(button);
+          });
+        };
+
+        const checkAnswer = (button, isCorrect) => {
+          const allButtons = document.querySelectorAll(".answer-button");
+          allButtons.forEach((btn) => btn.classList.add("disabled"));
+
+          if (isCorrect) {
+            button.classList.add("correct");
+            // Play correct sound
+            correctAudio.currentTime = 0;
+            correctAudio.play();
+            // Award XP for correct answer
+            awardXP(10);
+            showModal(
+              "Correct!",
+              "Great job! On to the next question.",
+              "correct",
+              () => {
+                currentQuestionIndex++;
+                renderQuestion();
+              }
+            );
+          } else {
+            button.classList.add("incorrect");
+            // Play wrong sound
+            wrongAudio.currentTime = 0;
+            wrongAudio.play();
+            if (
+              !failedQuestions.some(
+                (q) => q.question === currentQuestions[currentQuestionIndex].question
+              )
+            ) {
+              failedQuestions.push(currentQuestions[currentQuestionIndex]);
+            }
+            showModal("Incorrect!", "That's not the right answer. Keep trying!", "incorrect");
+          }
+        };
+
+        // Award XP and update userProgress and leaderboard
+        const awardXP = (amount) => {
+          userXP += amount;
+          xpCountEl.textContent = userXP;
+          // Update in Firebase
+          const userXPRef = database.ref(`users/${userId}/progress/totalXP`);
+          userXPRef.set(userXP);
+
+          // Update leaderboard XP
+          const leaderboardXPRef = database.ref(`leaderboard/${userId}/xp`);
+          leaderboardXPRef.set(userXP);
+        };
+
+        // Update streak in Firebase and leaderboard
+        const updateStreak = () => {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const lastDate = userProgress.lastQuizDate ? new Date(userProgress.lastQuizDate) : null;
+          if (lastDate) lastDate.setHours(0, 0, 0, 0);
+
+          let newStreak = 1;
+          if (lastDate) {
+            const diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+            if (diffDays === 1) {
+              newStreak = (userProgress.streak || 0) + 1;
+            } else if (diffDays === 0) {
+              newStreak = userProgress.streak || 0;
+            }
+          }
+
+          userStreak = newStreak;
+          streakCountEl.textContent = userStreak;
+
+          // Update in Firebase
+          const updates = {};
+          updates[`users/${userId}/progress/streak`] = userStreak;
+          updates[`users/${userId}/progress/lastQuizDate`] = today.toISOString();
+          database.ref().update(updates);
+
+          // Update leaderboard streak
+          const leaderboardStreakRef = database.ref(`leaderboard/${userId}/streak`);
+          leaderboardStreakRef.set(userStreak);
+        };
+
+        const showResults = () => {
+          let title, message, modalType;
+          let stars = 0;
+
+          // Determine star rating based on errors
+          if (failedQuestions.length === 0) {
+            stars = 3;
+            title = "Perfect Score!";
+            message = `You completed the level with no mistakes! Amazing!`;
+            modalType = "success";
+          } else if (failedQuestions.length <= 2) {
+            stars = 2;
+            title = "Great Job!";
+            message = `You completed the level with ${failedQuestions.length} mistake(s). You earned two stars.`;
+            modalType = "success";
+          } else if (failedQuestions.length <= 5) {
+            stars = 1;
+            title = "Good Effort!";
+            message = `You completed the level with ${failedQuestions.length} mistake(s). You earned one star.`;
+            modalType = "success";
+          } else {
+            stars = 0;
+            title = "Keep Practicing!";
+            message = `You completed the level with ${failedQuestions.length} mistakes. Don't worry, you can try again!`;
+            modalType = "incorrect";
+          }
+
+          // Save the progress to Firebase
+          if (userId) {
+            const levelProgressRef = database.ref(
+              `users/${userId}/progress/${selectedQuiz.id}/${currentLevel}`
+            );
+            // Only update if the new score is better
+            if (
+              !userProgress[selectedQuiz.id] ||
+              !userProgress[selectedQuiz.id][currentLevel] ||
+              stars > userProgress[selectedQuiz.id][currentLevel]
+            ) {
+              levelProgressRef.set(stars);
+            }
+          }
+
+          // Update streak and lastQuizDate if level completed (at least 1 star)
+          if (stars > 0) {
+            updateStreak();
+          }
+
+          // Award XP for level completion (bonus XP)
+          if (stars > 0) {
+            awardXP(50 * stars);
+          }
+
+          // Update badges for milestones
+          updateBadges(stars);
+
+          // --- THE FIX IS HERE ---
+          // Reset the flag as the quiz is now over. This will allow the progress listener to work normally again.
+          isQuizInProgress = false;
+
+          // Render stars in the modal
+          starsContainer.style.display = "flex";
+          starsContainer.innerHTML = "";
+          for (let i = 0; i < 3; i++) {
+            const starIcon = document.createElement("i");
+            if (i < stars) {
+              starIcon.className = "fas fa-star";
+            } else {
+              starIcon.className = "far fa-star"; // Outline for unearned stars
+            }
+            starsContainer.appendChild(starIcon);
+          }
+
+          // Show/hide failed questions section
+          if (failedQuestions.length > 0) {
+            failedQuestionsSection.style.display = "block";
+            failedQuestionsList.innerHTML = "";
+            failedQuestions.forEach((q) => {
+              const li = document.createElement("li");
+              li.textContent = q.question;
+              failedQuestionsList.appendChild(li);
+            });
+          } else {
+            failedQuestionsSection.style.display = "none";
+          }
+
+          // Remove existing buttons
+          modalFooter.innerHTML = "";
+
+          if (failedQuestions.length > 0) {
+            // Give option to redo or continue
+            const redoBtn = document.createElement("button");
+            redoBtn.textContent = "Redo Failed Questions";
+            redoBtn.classList.add("redo-btn");
+            redoBtn.addEventListener("click", () => {
+              feedbackModal.style.display = "none";
+              const newFailedQuestions = [...failedQuestions];
+              failedQuestions = [];
+              currentQuestions = newFailedQuestions;
+              currentQuestionIndex = 0;
+              totalQuestionsInLevel = newFailedQuestions.length;
+              renderQuestion();
+            });
+
+            const continueBtn = document.createElement("button");
+            continueBtn.textContent = "Continue";
+            continueBtn.classList.add("continue-btn");
+            continueBtn.addEventListener("click", () => {
+              feedbackModal.style.display = "none";
+              renderQuizMainPage();
+            });
+            modalFooter.appendChild(redoBtn);
+            modalFooter.appendChild(continueBtn);
+          } else {
+            // Only show continue button for perfect score
+            const continueBtn = document.createElement("button");
+            continueBtn.textContent = "Continue";
+            continueBtn.classList.add("continue-btn");
+            continueBtn.addEventListener("click", () => {
+              feedbackModal.style.display = "none";
+              renderQuizMainPage();
+            });
+            modalFooter.appendChild(continueBtn);
+          }
+
+          // Show modal with confetti if perfect score
+          if (stars === 3) {
+            launchConfetti();
+          }
+
+          // Update modal content and show it
+          showModal(title, message, modalType);
+        };
+
+        // Badge update logic
+        const updateBadges = (stars) => {
+          let updates = {};
+          let badgesChanged = false;
+
+          // First Quiz Complete badge
+          if (!userProgress.firstQuizComplete) {
+            updates[`users/${userId}/progress/firstQuizComplete`] = true;
+            badgesChanged = true;
+          }
+
+          // 5-Day Streak badge
+          if (userStreak >= 5 && !userProgress.fiveDayStreak) {
+            updates[`users/${userId}/progress/fiveDayStreak`] = true;
+            badgesChanged = true;
+          }
+
+          // Master of Python Basics badge example:
+          // Check if user completed all levels of a quiz titled "Python Basics" with 3 stars
+          if (!userProgress.masterPythonBasics) {
+            const pythonQuizEntry = Object.entries(quizzes).find(
+              ([id, quiz]) => quiz.title.toLowerCase() === "python basics"
+            );
+            if (pythonQuizEntry) {
+              const [pythonQuizId, pythonQuiz] = pythonQuizEntry;
+              const progressForPython = userProgress[pythonQuizId] || {};
+              const allCompleted = pythonQuiz.levels.every((_, idx) => progressForPython[idx] === 3);
+              if (allCompleted) {
+                updates[`users/${userId}/progress/masterPythonBasics`] = true;
+                badgesChanged = true;
+              }
+            }
+          }
+
+          if (badgesChanged) {
+            database.ref().update(updates);
+          }
+        };
+
+        const showModal = (title, message, type, onCloseCallback) => {
+          modalTitle.textContent = title;
+          modalMessage.textContent = message;
+          modalContent.className = `modal-content modal-${type}`;
+          feedbackModal.style.display = "flex";
+
+          // Clear and add new event listener
+          const modalCloseBtn = modalFooter.querySelector("#modal-close-btn");
+          if (modalCloseBtn) {
+            modalCloseBtn.remove(); // Remove the old button if it exists
+          }
+          const newModalCloseBtn = document.createElement("button");
+          newModalCloseBtn.id = "modal-close-btn";
+          newModalCloseBtn.textContent = "Continue";
+
+          // For incorrect answers, don't auto-advance
+          if (onCloseCallback) {
+            newModalCloseBtn.addEventListener("click", () => {
+              feedbackModal.style.display = "none";
+              onCloseCallback();
+            });
+            modalFooter.innerHTML = "";
+            modalFooter.appendChild(newModalCloseBtn);
+          } else if (type === "incorrect") {
+            newModalCloseBtn.addEventListener("click", () => {
+              feedbackModal.style.display = "none";
+              document.querySelectorAll(".answer-button").forEach((btn) => btn.classList.remove("disabled"));
+            });
+            modalFooter.innerHTML = "";
+            modalFooter.appendChild(newModalCloseBtn);
+          }
+        };
+
+        // Confetti animation for perfect score celebration
+        const launchConfetti = () => {
+          const duration = 3000;
+          const animationEnd = Date.now() + duration;
+          const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1100 };
+
+          function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+          }
+
+          // Create confetti pieces
+          const confettiPieces = [];
+          const colors = ["#58cc02", "#ffd700", "#8c42ff", "#ff4b4b", "#2d2d2d"];
+
+          for (let i = 0; i < 150; i++) {
+            const confetti = document.createElement("div");
+            confetti.style.position = "fixed";
+            confetti.style.width = "8px";
+            confetti.style.height = "14px";
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = `${randomInRange(0, window.innerWidth)}px`;
+            confetti.style.top = `${randomInRange(-20, 0)}px`;
+            confetti.style.opacity = "1";
+            confetti.style.borderRadius = "2px";
+            confetti.style.pointerEvents = "none";
+            confetti.style.zIndex = "1100";
+            confetti.style.willChange = "transform, opacity";
+            confettiContainer.appendChild(confetti);
+            confettiPieces.push({
+              el: confetti,
+              x: parseFloat(confetti.style.left),
+              y: parseFloat(confetti.style.top),
+              rotation: randomInRange(0, 360),
+              rotationSpeed: randomInRange(10, 30),
+              velocityX: randomInRange(-10, 10),
+              velocityY: randomInRange(5, 15),
+              opacity: 1,
+              gravity: 0.5,
+            });
+          }
+
+          function animate() {
+            const now = Date.now();
+            if (now > animationEnd) {
+              confettiPieces.forEach((piece) => {
+                confettiContainer.removeChild(piece.el);
+              });
+              confettiPieces.length = 0;
+              return;
+            }
+            confettiPieces.forEach((piece) => {
+              piece.x += piece.velocityX;
+              piece.y += piece.velocityY;
+              piece.velocityY += piece.gravity;
+              piece.rotation += piece.rotationSpeed;
+              piece.opacity -= 0.02;
+              if (piece.opacity < 0) piece.opacity = 0;
+              piece.el.style.transform = `translate3d(${piece.x}px, ${piece.y}px, 0) rotate(${piece.rotation}deg)`;
+              piece.el.style.opacity = piece.opacity;
+            });
+            requestAnimationFrame(animate);
+          }
+          animate();
+        };
+
+        // --- Event Listeners ---
+        backToHomeFromQuizBtn.addEventListener("click", () => {
+          // --- THE FIX IS HERE ---
+          // Reset the flag when navigating back
+          isQuizInProgress = false;
+          showPage(landingPage);
+        });
+        backToLevelsBtn.addEventListener("click", () => {
+          // --- THE FIX IS HERE ---
+          // Reset the flag when navigating back
+          isQuizInProgress = false;
+          renderQuizMainPage();
+        });
+
+        // Tabs event listeners
+        tabHomeBtn.addEventListener("click", () => {
+          tabHomeBtn.classList.add("active");
+          tabLeaderboardBtn.classList.remove("active");
+          showPage(landingPage);
+        });
+        tabLeaderboardBtn.addEventListener("click", () => {
+          tabLeaderboardBtn.classList.add("active");
+          tabHomeBtn.classList.remove("active");
+          showPage(leaderboardPage);
+        });
+
+        // Listen for authentication state changes and then load the data
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            userId = user.uid;
+            // Save displayName to leaderboard if available
+            if (user.displayName) {
+              database.ref(`leaderboard/${userId}/displayName`).set(user.displayName);
+            }
+            loadAllData();
+          } else {
+            window.location.href = "auth.html";
+          }
+        });
+      });
+    </script>
+   <button id="installBtn" style="display:none;">Install App</button>
+    <style>
+      #installBtn {
+      background-color: #58CC02;
+      color: white;
+      border-radius: 9999px;
+      padding: 0.75rem 2rem;
+      font-size: 1.25rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(88, 204, 2, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+          position: fixed;
+    bottom: 1em;
+    }
+    #installBtn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(88, 204, 2, 0.5);
+    }
+    </style>
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+      console.log('beforeinstallprompt event captured.');
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response: ${outcome}`);
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
+    });
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker registered!'))
+        .catch(err => console.error('SW registration failed:', err));
+    }
+  </script>
+
+</body>
+</html>

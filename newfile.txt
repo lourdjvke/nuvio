@@ -1,0 +1,239 @@
+can you edit the part of the code that sends message to the AI so it knows not to add "\n \n" or "```" cos rn its adding it sometimes which brings the console of:
+
+AI Response: {logprobs: null, finish_reason: 'stop', native_finish_reason: 'stop', index: 0, message: {…}, …}
+
+finish_reason
+
+: 
+
+"stop"
+
+index
+
+: 
+
+0
+
+logprobs
+
+: 
+
+null
+
+message
+
+: 
+
+{role: 'assistant', content: '[\n  {\n    "question": "¿Cómo saludar a alguien en …": "Soy Abu ABC", "isCorrect": false}\n    ]\n  }\n]', refusal: null, reasoning: null}
+
+native_finish_reason
+
+: 
+
+"stop"
+
+toString
+
+: 
+
+()=>e.message?.content
+
+usage
+
+: 
+
+(2) [{…}, {…}]
+
+valueOf
+
+: 
+
+()=>e.message?.content
+
+via_ai_chat_service
+
+: 
+
+true
+
+[[Prototype]]
+
+: 
+
+Object
+
+
+
+dashboard:839 
+
+Generated questions format invalid. (16) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+
+0
+
+: 
+
+answers
+
+: 
+
+Array(4)
+
+0
+
+: 
+
+{text: 'Hello', isCorrect: false}
+
+1
+
+: 
+
+{text: 'Hola', isCorrect: true}
+
+2
+
+: 
+
+{text: 'Adiós', isCorrect: false}
+
+3
+
+: 
+
+{text: 'Buenos días', isCorrect: false}
+
+length
+
+: 
+
+4
+
+[[Prototype]]
+
+: 
+
+Array(0)
+
+question
+
+: 
+
+"¿Cómo saludar a alguien en español?"
+
+snippet
+
+: 
+
+""
+
+[[Prototype]]
+
+: 
+
+Object
+
+1
+
+: 
+
+{question: "¿Cómo responder a '¿Cómo estás?'", snippet: '', answers: Array(4)}
+
+2
+
+: 
+
+{question: '¿Cómo saludar en la tarde?', snippet: '', answers: Array(4)}
+
+3
+
+: 
+
+{question: '¿Cómo saludar en la noche?', snippet: '', answers: Array(4)}
+
+4
+
+: 
+
+{question: '¿Cómo saludar a alguien en particular?', snippet: '', answers: Array(4)}
+
+5
+
+: 
+
+{question: '¿Cómo saludar a un adulto mayor?', snippet: '', answers: Array(4)}
+
+6
+
+: 
+
+{question: '¿Cómo saludar a un niño?', snippet: '', answers: Array(4)}
+
+7
+
+: 
+
+{question: "¿Cómo responder a '¿Cómo te llamas?'", snippet: '', answers: Array(4)}
+
+8
+
+: 
+
+{question: '¿Cómo saludar de forma formal?', snippet: '', answers: Array(4)}
+
+9
+
+: 
+
+{question: "¿Cómo responder a '¿Dónde está...?'", snippet: '', answers: Array(4)}
+
+10
+
+: 
+
+{question: '¿Cómo saludar a un amigo?', snippet: '', answers: Array(4)}
+
+11
+
+: 
+
+{question: "¿Cómo responder a '¿Qué eres?'", snippet: '', answers: Array(4)}
+
+12
+
+: 
+
+{question: '¿Cómo saludar a un extraño?', snippet: '', answers: Array(4)}
+
+13
+
+: 
+
+{question: "¿Cómo responder a '¿Dónde está el baño?'", snippet: '', answers: Array(4)}
+
+14
+
+: 
+
+{question: '¿Cómo saludar a un niño pequeño?', snippet: '', answers: Array(4)}
+
+15
+
+: 
+
+{question: "¿Cómo responder a '¿Cuál es tu nombre?'", snippet: '', answers: Array(4)}
+
+length
+
+: 
+
+16
+
+[[Prototype]]
+
+: 
+
+Array(0)
+
+
+
+Whcih btw i dont see how its not working when it says "Generated questions format invalid" yet consoles the right things. Fix only that part of my code and do not change it from using puter js ai. Fix and clarify please
